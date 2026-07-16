@@ -1,0 +1,38 @@
+# TTG coarse estimation phase configuration.
+
+deterministic: false
+
+data:
+  data_root: /path/to/radiomap
+  channel_num: 5750
+  img_height: 256
+  img_width: 256
+  num_samples_sparse: 200
+  train_indices_range: [0, 1576]
+  val_indices_range: [1300, 1576]
+  test_indices_range: [1676, 1776]
+  gen_indices_range: [0, 1200]
+  num_workers: 4
+  prefetch_factor: 4
+  rss_offset: 95.0
+  rss_scale: 66.0
+  invalid_threshold: -1.0
+  invalid_fill_value: -95.0
+  max_stations: 3
+
+model:
+  name: AttUNet
+  in_channels: 2
+  out_channels: 1
+  channel_list: [128, 128, 256, 256, 512, 512]
+  conv_transpose: true
+
+training:
+  batch_size: 8
+  val_batch_size: 8
+  num_epochs: 200
+  lr: 1.0e-4
+  weight_decay: 1.0e-7
+  milestones: [50, 120]
+  gamma: 0.5
+  plot_every_n_epochs: 10
