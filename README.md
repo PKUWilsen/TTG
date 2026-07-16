@@ -4,16 +4,24 @@ This repository contains the open-source implementation of **TTG**, a two-phase 
 
 The code is organized around two phases:
 
-1. **Coarse Estimation Phase**: an Attention U-Net predicts an initial radio map from the building layout and sparse RSS observations.
-2. **Refinement Phase**: a diffusion-based refinement model improves the coarse map using enhanced sparse conditioning and DDIM sampling.
+1. **Adapt Phase**: an Attention U-Net predicts a coarse radio map from the obstacle layout and sparse RSS samples, and the coarse map is further used to construct enhanced samples and transmitter-position cues.
+2. **Refine Phase**: a diffusion-based refinement model improves the coarse map using enhanced sparse conditioning and DDIM sampling.
 
-Inside the Refinement Phase, inference uses a **three-stage DDIM guidance** strategy:
+<p align="center">
+  <img src="assets/framework_overview.png" alt="TTG framework overview" width="900">
+</p>
 
-- **Stage I**: coarse-core injection
-- **Stage II**: free generation
-- **Stage III**: sparse-point consistency
+Inside the Refine Phase, inference uses a **three-stage DDIM guidance** strategy:
 
-The terms *phase* and *stage* are used deliberately: the whole TTG pipeline has two phases, while only the refinement-phase sampler has three guidance stages.
+- **Stage I**: high-threshold coverage for structural rudiment generation.
+- **Stage II**: free-form diffusion for prototype generation.
+- **Stage III**: truth-anchor guidance using real sparse samples.
+
+<p align="center">
+  <img src="assets/guidance_process.png" alt="Three-stage conditional guidance process" width="900">
+</p>
+
+The terms *phase* and *stage* are used deliberately: the whole TTG pipeline has two phases, while only the refine-phase sampler has three guidance stages.
 
 ## Repository structure
 
@@ -86,7 +94,7 @@ or edit `data.data_root` in the YAML config files.
 python wash.py
 ```
 
-## Coarse Estimation Phase
+## Adapt Phase
 
 Train the coarse estimator:
 
@@ -103,7 +111,7 @@ The best checkpoint is saved as:
 outputs/coarse_phase/coarse_best.pth
 ```
 
-## Refinement Phase
+## Refine Phase
 
 Train the diffusion refinement model using the trained coarse estimator:
 
